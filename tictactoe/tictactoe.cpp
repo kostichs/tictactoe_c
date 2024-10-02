@@ -25,6 +25,7 @@ int main()
         prepare_game(board, players);
         draw_board(board);
 
+        // game process
         do {
             active_player = active_player % 2;
             cout << active_player << endl;
@@ -59,7 +60,35 @@ void define_players()
 
 void turn_player(char board[b_size][b_size], string active)
 {
-    cout << active << " make a turn;" << endl;
+    cout << active << " makes a turn;" << endl;
+
+    if (active == "bot" || active == "Bot")
+    {
+        //Bot plays automatically
+
+    }
+    else
+    {
+        int x, y;
+        //Human plays manually
+        do {
+            cout << "Type coordinates for your turn, for example, 1 1" << endl;
+            cin >> x >> y;
+            if (0 < x && x < 4 && 0 < y && y < 4) {
+
+                break;
+            }
+            else {
+                cout << x << " and " << y << " are unavailable values. Please, type coordinates in range from 1 to 3" << endl;
+            }
+
+            
+        } while (true);
+
+        
+        cout << "Your coordinates are " << x << " and " << y << endl;
+
+    }
 }
 
 void calculate_positions()
