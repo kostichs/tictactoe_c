@@ -5,16 +5,25 @@
 
 using namespace std;
 
-void play_game();
+const int b_size = 4;
+const int p_size = 2;
+
+void play_game(string board[b_size][b_size], string players[p_size]);
+
 
 
 int main()
 {
+
+    string board[b_size][b_size];
+    string players[p_size];
+
+
     std::cout << "Hello User!\n";
 
     do {
 
-        play_game();
+        play_game(board, players);
 
 	} while (true);
 
@@ -41,14 +50,17 @@ void calculate_positions()
 
 }
 
-void play_game()
+void play_game(string board[b_size][b_size], string players[p_size])
 {
-    string players[2];
-    for (int i = 0; i < 2; i++)
+
+    for (int i = 0; i < p_size; i++)
     {
         cout << "Who is the first Player: Bot or Human?" << endl;
-        cin >> players[i];
+        cin >> players[i]; //or cin >> *(players + i) just to know for me
     }
 
     cout << players[0] << " is playing against " << players[1] << "! Fight!" << endl;
+
+    
+
 }
