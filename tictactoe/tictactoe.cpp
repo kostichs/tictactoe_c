@@ -6,8 +6,9 @@ using namespace std;
 const int b_size = 4;
 const int p_size = 2;
 
-void play_game(char board[][b_size], string players[p_size]);
+void prepare_game(char board[][b_size], string players[p_size]);
 void draw_board(char board[][b_size]);
+void turn_player(char board[b_size][b_size], string active);
 
 
 int main()
@@ -15,14 +16,22 @@ int main()
 
     char board[b_size][b_size];
     string players[p_size];
-
+    int active_player = 0;
 
     std::cout << "Hello User!\n";
 
     do {
 
-        play_game(board, players);
+        prepare_game(board, players);
         draw_board(board);
+
+        do {
+            active_player = active_player % 2;
+            cout << active_player << endl;
+            turn_player(board, players[active_player]);
+            active_player++;
+
+        } while (true);
 
 
 
@@ -48,9 +57,9 @@ void define_players()
 
 }
 
-void turn_player()
+void turn_player(char board[b_size][b_size], string active)
 {
-
+    cout << active << " make a turn;" << endl;
 }
 
 void calculate_positions()
@@ -58,7 +67,7 @@ void calculate_positions()
 
 }
 
-void play_game(char board[b_size][b_size], string players[p_size])
+void prepare_game(char board[b_size][b_size], string players[p_size])
 {
     board[0][0] = ' ';
     for (int i = 1; i < b_size; i++)
