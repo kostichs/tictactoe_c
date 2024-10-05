@@ -8,7 +8,8 @@ const int p_size = 2;
 
 void prepare_game(char board[][b_size], string players[p_size]);
 void draw_board(char board[][b_size]);
-void turn_player(char board[b_size][b_size], string active);
+void turn_player(char board[b_size][b_size], string players[], int active);
+void calculate_positions(int x, int y);
 
 
 int main()
@@ -23,13 +24,14 @@ int main()
     do {
 
         prepare_game(board, players);
-        draw_board(board);
+        
 
         // game process
         do {
+            draw_board(board);
             active_player = active_player % 2;
             cout << active_player << endl;
-            turn_player(board, players[active_player]);
+            turn_player(board, players, active_player);
             active_player++;
 
         } while (true);
@@ -58,11 +60,11 @@ void define_players()
 
 }
 
-void turn_player(char board[b_size][b_size], string active)
+void turn_player(char board[b_size][b_size], string players[], int active)
 {
     cout << active << " makes a turn;" << endl;
 
-    if (active == "bot" || active == "Bot")
+    if (players[active] == "bot" || players[active] == "Bot")
     {
         //Bot plays automatically
 
@@ -71,29 +73,44 @@ void turn_player(char board[b_size][b_size], string active)
     {
         int x, y;
         //Human plays manually
-        do {
+        char sign = ' ';
+        do 
+        {
             cout << "Type coordinates for your turn, for example, 1 1" << endl;
             cin >> x >> y;
-            if (0 < x && x < 4 && 0 < y && y < 4) {
+            if (0 < x && x < 4 && 0 < y && y < 4 && board[x][y] == '.') {
 
+                cout << "Your coordinates are " << x << " and " << y << endl;
+                if (active % 2 == 0)
+                {
+                    sign = 'X';
+                }
+                else
+                {
+                    sign = 'O';
+                }
+                board[x][y] = sign;
                 break;
             }
-            else {
+            else 
+            {
                 cout << x << " and " << y << " are unavailable values. Please, type coordinates in range from 1 to 3" << endl;
             }
 
             
         } while (true);
 
-        
-        cout << "Your coordinates are " << x << " and " << y << endl;
+
+
+        calculate_positions(x, y);
+
 
     }
 }
 
-void calculate_positions()
+void calculate_positions(int x, int y)
 {
-
+    
 }
 
 void prepare_game(char board[b_size][b_size], string players[p_size])
