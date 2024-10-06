@@ -1,190 +1,177 @@
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
+//This const is used often in for-loops in some functions, so I decided to declare them globally
+const int b_size = 4; // size of the board. 
 
-const int b_size = 4;
-const int p_size = 2;
-
-void prepare_game(char board[b_size][b_size], string players[p_size]);
-void define_players(string players[]);
-void draw_board(char board[b_size][b_size]);
-void turn_player(char board[b_size][b_size], string players[], int active);
-bool calculate_positions(char board[b_size][b_size]);
-
+void prepare_game(char board[b_size][b_size], string players[]); // preparing board game array, player list and a queue for playing
+void define_players(string players[]); // random definition of the queue for playing
+void draw_board(char board[b_size][b_size]); // displaying the board game
+void turn_player(char board[b_size][b_size], string players[], int active); // bot and human turns
+bool calculate_positions(char board[b_size][b_size]); // calculation whether the current game is over, return boolean
 
 int main()
 {
+    const int p_size = 2; // size of count of players
+    int active_player; // number of active player
+    char board[b_size][b_size]; // array of chars
+    string players[p_size]; // array of players
+    string answer; // var for answer whether the app should be broken
+    bool is_over;
+    cout << "Hello!\n";
 
-    char board[b_size][b_size];
-    string players[p_size];
-    int active_player = 0;
-
-    
-    bool is_over = false;
-    string answer = "";
-
-    std::cout << "Hello!\n";
-
-    do {
-        int counter = 0; // counter of all turns. 9 means there is no more turn.
+    do 
+    {
+        int counter = 1; // counter of all turns. 9 means there is no more turn.
+        is_over = false; // var for definition whether the session is over
+        active_player = 0;
         prepare_game(board, players);
-        
 
-        // game process
-        do {
+        // game session
+        do 
+        {
+            active_player = active_player % 2; // number of the current player is either 0 or 1
             draw_board(board);
-            active_player = active_player % 2;
-            cout << active_player << endl;
+            cout << "\n";
             turn_player(board, players, active_player);
             is_over = calculate_positions(board);
-            if (is_over == true) {
-                cout << players[active_player] << " is our new winner! Congratulations!" << endl;
+
+            if (is_over) 
+            {
+                cout << players[active_player] << " is our new winner! Congratulations!\n" << endl;
                 draw_board(board);
                 break;
             }
-            if (counter == 8) {
-                cout << "There is no winner in the current game session" << endl;
+
+            if (counter == 9) 
+            {
+                draw_board(board);
+                cout << "\nThere is no winner in the current game session" << endl;
                 break;
             }
             counter++;
             active_player++;
 
-        } while (is_over == false);
+        } while (!is_over);
 
-        is_over = false;
-        cout << "Do you want to play again: Press 'Y' or 'N'" << endl;
+        cout << "\nDo you want to play again: Press 'Y' or 'N'" << endl;
         cin >> answer;
 
     } while (answer != "N");
-    cout << "Thank you! See you soon!";
+    cout << "\nThank you! See you soon!";
 
     return 0;
 }
 
-void draw_board(char board[b_size][b_size])
+void draw_board(char board[b_size][b_size]) // Displaying of the current board game
 {
     for (int row = 0; row < b_size; row++) {
         for (int col = 0; col < b_size; col++) {
             cout << board[row][col] << ' ';
-
         }
         cout << endl;
     }
 }
 
-void define_players(string players[]) // random definition of the first player
-{
-    srand(static_cast<unsigned int>(std::time(0)));
-    int randomIndex = rand() % 2;
-
-    cout << "Who does play: Bot or Human?" << endl;
-    cin >> players[randomIndex];
-    cout << "Who does play: Bot or Human?" << endl;
-    randomIndex == 0 ? randomIndex++ : randomIndex--;
-    cin >> players[randomIndex];
-}
-
-
 void turn_player(char board[b_size][b_size], string players[], int active)
 {
     int x, y;
-    char sign = ' ';
-
-    if (active % 2 == 0) // Define the sign of the current player
-    {
-        sign = 'X';
-    }
-    else
-    {
-        sign = 'O';
-    }
-    
+    char sign = (active % 2 == 0) ? 'X' : 'O'; // Assigning sign based on the player
     cout << players[active] << ", your turn..." << endl;
-    
-    if (players[active] == "bot" || players[active] == "Bot")
+
+    if (players[active] == "bot" || players[active] == "Bot") 
     {
-        
-        //Bot plays automatically
-        do
+        // Bot plays automatically and randomly
+        do 
         {
-            int x = rand() % 3 + 1;
-            int y = rand() % 3 + 1;
-            if (0 < x && x < 4 && 0 < y && y < 4 && board[x][y] == '.') 
-            {
+            x = rand() % 3 + 1;
+            y = rand() % 3 + 1;
+            if (board[x][y] == '.') { // random positions on the cells with '.'
                 board[x][y] = sign;
                 break;
             }
-
         } while (true);
-
     }
-    else
+    else 
     {
-        //Human plays manually
-        
+        // Human plays manually
         do 
         {
-            cout << "Type coordinates for your turn, for example, 1 1" << endl;
+            cout << "Type coordinates for your turn (1-3 for both x and y), e.g., 1 1" << endl;
             cin >> x >> y;
-            if (0 < x && x < 4 && 0 < y && y < 4 && board[x][y] == '.') 
-            {
+            if (x >= 1 && x <= 3 && y >= 1 && y <= 3 && board[x][y] == '.') // 1-based user input, 0-based board
+            { 
+                board[x][y] = sign;
                 break;
             }
             else 
             {
-                cout << x << " and " << y << " are unavailable values. Please, type coordinates in range from 1 to 3" << endl;
+                cout << "Invalid coordinates. Please try again." << endl;
             }
-
-            
         } while (true);
 
-        board[x][y] = sign;
-        cout << players[active] << " makes turn on " << x << " and " << y << endl;
-        
+        cout << players[active] << " made a move at " << x << " " << y << endl;
     }
 }
 
 bool calculate_positions(char board[b_size][b_size])
 {
-    for (int row = 1; row < b_size; row++) //horizontal checks
+    // Horizontal checks
+    for (int row = 1; row < b_size; row++) 
     {
-        if (board[row][1] != '.' && (board[row][1] == board[row][2] && board[row][2] == board[row][3])) {
+        if (board[row][1] != '.' && board[row][1] == board[row][2] && board[row][2] == board[row][3]) 
+        {
             return true;
         }
     }
-    for (int col = 1; col < b_size; col++) // vertical checks
+    // Vertical checks
+    for (int col = 1; col < b_size; col++) 
     {
-        if (board[1][col] != '.' && (board[1][col] == board[2][col] && board[2][col] == board[3][col])) {
+        if (board[1][col] != '.' && board[1][col] == board[2][col] && board[2][col] == board[3][col]) 
+        {
             return true;
         }
     }
-    
-    if ((board[1][1] != '.' && (board[1][1] == board[2][2] && board[2][2] == board[3][3])) 
-        || (board[1][3] != '.' && (board[1][3] == board[2][2] && board[2][2] == board[3][1]))) { // diagonal checks
+    // Diagonal checks
+    if ((board[1][1] != '.' && board[1][1] == board[2][2] && board[2][2] == board[3][3]) ||
+        (board[1][3] != '.' && board[1][3] == board[2][2] && board[2][2] == board[3][1])) 
+    {
         return true;
     }
-
     return false;
 }
 
-void prepare_game(char board[b_size][b_size], string players[p_size]) // 
+void prepare_game(char board[b_size][b_size], string players[])
 {
+    // Set up the board headers
     board[0][0] = ' ';
-    for (int i = 1; i < b_size; i++)
+    for (int i = 1; i < b_size; i++) 
     {
-        board[0][i] = i + '0'; // + 0 is transformation to string type
-        board[i][0] = i + '0';
+        board[0][i] = '0' + i; // Set headers
+        board[i][0] = '0' + i;
     }
 
+    // Reset all cells to '.'
     for (int row = 1; row < b_size; row++) {
         for (int col = 1; col < b_size; col++) {
             board[row][col] = '.';
-
         }
     }
 
     define_players(players);
-    cout << players[0] << " is playing against " << players[1] << "! Fight!" << endl;
+    cout << players[0] << " is playing against " << players[1] << "! Let the game begin!" << endl;
+}
 
+void define_players(string players[])
+{
+    srand(static_cast<unsigned int>(std::time(0))); // Randomize player order
+    int randomIndex = rand() % 2;
+    cout << "Who does play: Bot or Human?" << endl;
+    cin >> players[randomIndex];
+    cout << "Who does play: Bot or Human?" << endl;
+    randomIndex = (randomIndex == 0) ? 1 : 0; // Assign the other player
+    cin >> players[randomIndex];
 }
